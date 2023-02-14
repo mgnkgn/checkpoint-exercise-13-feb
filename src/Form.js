@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 
-const Form = ({ notes }) => {
+const Form = ({ notes, addNewText }) => {
   const [num, setNum] = useState(notes.length);
   const inputRef = useRef();
 
@@ -12,20 +12,24 @@ const Form = ({ notes }) => {
     console.log(receivedInput);
     inputRef.current.value = "";
 
-    const response = await fetch(API_BASE_URL + "api/posts", {
+    addNewText({
+      id: num + 1 || 1,
+      text: receivedInput.toString(),
+      timestamp: Date.now(),
+    });
+    const response = await fetch(`${API_BASE_URL}api/posts`, {
       method: "POST",
       mode: "cors",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        id: num + 1 || 1,
-        text: receivedInput,
-        timestamp: Date.now(),
+        text: receivedInput.toString(),
       }),
     });
 
-    return response.json();
+    const json = await response.json();
+    console.log(json);
   };
   return (
     <form onSubmit={formSubmitHandler}>
